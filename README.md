@@ -8,13 +8,16 @@ referenced it. Visible on an admin page (side menu → **Audit Log**) with filte
 retention and purge controls. Super Admin only by default (RBAC actions
 `plugin::audit-log.read` / `plugin::audit-log.purge`).
 
-## Install (local plugin)
+## Install
+
+```bash
+pnpm add strapi-audit-log   # or npm i / yarn add
+```
 
 ```ts
 // config/plugins.ts
 'audit-log': {
   enabled: true,
-  resolve: './src/plugins/strapi-audit-log',
   config: {
     retentionDays: 180,     // 0 = keep forever; a plugin timer purges older rows every 6 h
     logSuccessOnly: false,  // true = drop 4xx/5xx rows
@@ -22,6 +25,13 @@ retention and purge controls. Super Admin only by default (RBAC actions
   },
 },
 ```
+
+Then `pnpm build` (the admin panel bundles the plugin page) and restart Strapi. The
+`audit_log_events` table is created on first start.
+
+Developing it in place instead? Copy the repo to `src/plugins/strapi-audit-log`, run
+`pnpm install && pnpm build` inside it, and add
+`resolve: './src/plugins/strapi-audit-log'` next to `enabled`.
 
 ### Reverse proxy
 
@@ -38,7 +48,7 @@ Also set `proxy: true` in `config/server.ts` so Strapi itself trusts the header.
 ## Develop
 
 ```bash
-pnpm install --ignore-workspace
+pnpm install
 pnpm test            # vitest unit tests
 pnpm build && pnpm verify
 ```
